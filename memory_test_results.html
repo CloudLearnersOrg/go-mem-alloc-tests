@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Memory Allocation Test Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .chart-container { height: 400px; margin-bottom: 40px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        h1, h2 { color: #333; }
+        .memory-cell { white-space: nowrap; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Memory Allocation Test Results</h1>
+
+        <h2>Struct Field Order Test</h2>
+        <div class="chart-container">
+            <canvas id="chart0"></canvas>
+        </div>
+
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Optimized Memory</th>
+                <th>Unoptimized Memory</th>
+                <th>Memory Saving</th>
+                <th>Saving Percentage</th>
+            </tr>
+
+            <tr>
+                <td>Standard</td>
+                <td class="memory-cell">167.85 MB <span class="bytes-value">(176005120 bytes)</span></td>
+                <td class="memory-cell">183.11 MB <span class="bytes-value">(192007784 bytes)</span></td>
+                <td class="memory-cell">15.26 MB <span class="bytes-value">(16002664 bytes)</span></td>
+                <td>8.33%</td>
+            </tr>
+
+        </table>
+
+        <h2>Large Struct Field Order Test</h2>
+        <div class="chart-container">
+            <canvas id="chart1"></canvas>
+        </div>
+
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Optimized Memory</th>
+                <th>Unoptimized Memory</th>
+                <th>Memory Saving</th>
+                <th>Saving Percentage</th>
+            </tr>
+
+            <tr>
+                <td>Standard</td>
+                <td class="memory-cell">381.48 MB <span class="bytes-value">(400012560 bytes)</span></td>
+                <td class="memory-cell">434.89 MB <span class="bytes-value">(456016440 bytes)</span></td>
+                <td class="memory-cell">53.41 MB <span class="bytes-value">(56003880 bytes)</span></td>
+                <td>12.28%</td>
+            </tr>
+
+        </table>
+
+        <h2>Multiple Struct Types Test</h2>
+        <div class="chart-container">
+            <canvas id="chart2"></canvas>
+        </div>
+
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Optimized Memory</th>
+                <th>Unoptimized Memory</th>
+                <th>Memory Saving</th>
+                <th>Saving Percentage</th>
+            </tr>
+
+            <tr>
+                <td>API Request</td>
+                <td class="memory-cell">45.79 MB <span class="bytes-value">(48010496 bytes)</span></td>
+                <td class="memory-cell">61.04 MB <span class="bytes-value">(64007632 bytes)</span></td>
+                <td class="memory-cell">15.26 MB <span class="bytes-value">(15997136 bytes)</span></td>
+                <td>24.99%</td>
+            </tr>
+
+            <tr>
+                <td>Config</td>
+                <td class="memory-cell">784.00 KB <span class="bytes-value">(802816 bytes)</span></td>
+                <td class="memory-cell">864.02 KB <span class="bytes-value">(884752 bytes)</span></td>
+                <td class="memory-cell">80.02 KB <span class="bytes-value">(81936 bytes)</span></td>
+                <td>9.26%</td>
+            </tr>
+
+            <tr>
+                <td>GraphQL</td>
+                <td class="memory-cell">60.02 MB <span class="bytes-value">(62940272 bytes)</span></td>
+                <td class="memory-cell">63.84 MB <span class="bytes-value">(66945624 bytes)</span></td>
+                <td class="memory-cell">3.82 MB <span class="bytes-value">(4005352 bytes)</span></td>
+                <td>5.98%</td>
+            </tr>
+
+            <tr>
+                <td>Database Entity</td>
+                <td class="memory-cell">51.49 MB <span class="bytes-value">(53987984 bytes)</span></td>
+                <td class="memory-cell">55.30 MB <span class="bytes-value">(57985840 bytes)</span></td>
+                <td class="memory-cell">3.81 MB <span class="bytes-value">(3997856 bytes)</span></td>
+                <td>6.89%</td>
+            </tr>
+
+            <tr style="font-weight: bold;">
+                <td>Total</td>
+                <td>-</td>
+                <td>-</td>
+                <td class="memory-cell">22.97 MB <span class="bytes-value">(24082280 bytes)</span></td>
+                <td>-</td>
+            </tr>
+
+        </table>
+
+        <script>
+            // Helper function to format bytes to human-readable format
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+                
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+            
+            // Toggle byte values visibility
+            document.addEventListener('DOMContentLoaded', function() {
+                const bytesValues = document.querySelectorAll('.bytes-value');
+                let bytesVisible = false;
+                
+                // Add button to toggle byte values
+                const toggleBtn = document.createElement('button');
+                toggleBtn.innerText = 'Show Raw Bytes';
+                toggleBtn.style = 'margin: 20px 0; padding: 8px 16px;';
+                toggleBtn.onclick = function() {
+                    bytesVisible = !bytesVisible;
+                    bytesValues.forEach(el => {
+                        el.style.display = bytesVisible ? 'inline' : 'none';
+                    });
+                    this.innerText = bytesVisible ? 'Hide Raw Bytes' : 'Show Raw Bytes';
+                };
+                
+                // Initially hide byte values
+                bytesValues.forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                // Add button to page
+                document.querySelector('.container').insertBefore(toggleBtn, document.querySelector('h2'));
+
+                // Chart for Struct Field Order Test
+                new Chart(document.getElementById('chart0'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Struct Field Order Test'],
+                        datasets: [
+                            {
+                                label: 'Optimized',
+                                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                data: [176005120]
+                            },
+                            {
+                                label: 'Unoptimized',
+                                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                data: [192007784]
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Memory Usage'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return formatBytes(value);
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        var label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += formatBytes(context.raw);
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Chart for Large Struct Field Order Test
+                new Chart(document.getElementById('chart1'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Large Struct Field Order Test'],
+                        datasets: [
+                            {
+                                label: 'Optimized',
+                                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                data: [400012560]
+                            },
+                            {
+                                label: 'Unoptimized',
+                                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                data: [456016440]
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Memory Usage'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return formatBytes(value);
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        var label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += formatBytes(context.raw);
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Chart for Multiple Struct Types Test
+                new Chart(document.getElementById('chart2'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Config', 'GraphQL', 'Database Entity', 'API Request'],
+                        datasets: [
+                            {
+                                label: 'Optimized',
+                                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                data: [802816, 62940272, 53987984, 48010496]
+                            },
+                            {
+                                label: 'Unoptimized',
+                                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                data: [884752, 66945624, 57985840, 64007632]
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Memory Usage'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return formatBytes(value);
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        var label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += formatBytes(context.raw);
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+            });
+        </script>
+    </div>
+</body>
+</html>
