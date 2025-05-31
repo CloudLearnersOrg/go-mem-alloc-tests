@@ -62,6 +62,21 @@ Generate reports in all available formats:
 make report
 ```
 
+## GitHub Pages Integration
+
+Test results are automatically exported to the `docs/` directory in a format suitable for GitHub Pages:
+
+- Individual test results are saved as separate HTML files
+- Historical results are preserved by date
+- An index page links to all available test results
+
+To view the results:
+1. Enable GitHub Pages for your repository (Settings -> Pages)
+2. Set the source to the `main` branch and `/docs` folder
+3. Access your results at `https://yourusername.github.io/mem-alloc-tests/`
+
+You can also view results locally by opening `docs/index.html` in your browser.
+
 ## Example Tests
 
 ### Struct Field Ordering Test

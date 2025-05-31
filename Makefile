@@ -1,4 +1,4 @@
-.PHONY: run list visualize clean test all help
+.PHONY: run list visualize clean test all help deploy-pages
 
 # Default target
 all: test visualize
@@ -23,11 +23,16 @@ visualize: run
 report:
 	go run main.go -viz -format=terminal
 	go run main.go -viz -format=html
-	go run main.go -viz -format=png
 
 # Clean generated files
 clean:
-	rm -f memory_test_results.*
+	rm -f memory_test_results.html
+	rm -rf results/html
+
+# Deploy results to GitHub Pages
+deploy-pages: visualize
+	@echo "GitHub Pages results ready in results/html/"
+	@echo "Push to your repository to make them available online."
 
 # Help
 help:
@@ -41,8 +46,9 @@ help:
 	@echo "  make visualize TEST=name FORMAT=html - Run specific test with HTML output"
 	@echo "  make report           - Generate all formats of reports"
 	@echo "  make clean            - Remove generated files"
+	@echo "  make deploy-pages     - Prepare GitHub Pages output"
 	@echo ""
 	@echo "Examples:"
 	@echo "  make test TEST=struct-small        - Run small struct test"
 	@echo "  make test TEST=struct-big          - Run big struct test"
-	@echo "  make visualize FORMAT=png TEST=all - Visualize all tests in PNG format"
+	@echo "  make visualize FORMAT=html TEST=all - Visualize all tests in HTML format"
